@@ -14,24 +14,30 @@ class Song {
         min = stoi(length.substr(0, length.size()- 3));
     }
     Song operator+(Song const& s2){
-            Song result;
-            if( (this->sec + s2.sec) >= 60){
-                result.sec = this->sec + s2.sec - 60;
-                result.min = this->min + s2.min + 1;
-            }
-            else{
-                result.sec = this->sec + s2.sec;
-                result.min = this->min + s2.min;
-            }
-            return result;
+        Song result;
+        if( (this->sec + s2.sec) >= 60){
+            result.sec = this->sec + s2.sec - 60;
+            result.min = this->min + s2.min + 1;
         }
+        else{
+            result.sec = this->sec + s2.sec;
+            result.min = this->min + s2.min;
+        }
+        return result;
+    }
+    bool operator>(Song const& s2){
+        if(this->min == s2.min) return this->sec > s2.sec;
+        return this->min > s2.min;
+    }
 };
 
 int main(){
     cout << "Welcome to Grant's Cassette maker!\n Please enter track information and press q when done";
     string name;
     string l;
-    vector<Song> tracks;
+    Song counterSong;
+    Song currentSong;
+    cout << "\n-----SIDE A-----";
     while(true){
         cout << "Track name (q to finish): ";
         cin.ignore();
@@ -39,23 +45,18 @@ int main(){
         if(name == "q") break;
         cout << "Track length: ";
         cin >> l;
-        tracks.push_back(Song(name, l));
-    }
-    Song counterSong;
-    cout << "\n-----SIDE A-----";
-    for (Song s : tracks) {
-        if((counterSong + s).min > 30){
+        currentSong = Song(name, l);
+        if((counterSong + currentSong) > Song("", "30:00")){
             cout << "\nSIDE A LENGTH: " << counterSong.min << ":" << counterSong.sec << endl;
             //cout << "\nEMPTY SPACE: " << 30-counterSong.min << ":" << 
             cout << "\n-----SIDE B-----\n";
             counterSong = Song();
         }
-        counterSong = counterSong + s;
+        counterSong = counterSong + currentSong;
         //cout << counterSong.min << " " << counterSong.sec << "\n";
-        cout << "Name: " << s.name << " length: " << s.min << ":" << s.sec << endl;
+        cout << counterSong.min << ":" << counterSong.sec << endl;
     }
     return 1;
-    //TODO fix the program
     //Add file reading
     //Add error handling for input
     //Add Side b length info
